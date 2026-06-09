@@ -1,7 +1,7 @@
 CC       := gcc
 CFLAGS   := -Wall -Wextra
 GLORPBIN := ../glorpbin
-INCLUDE  := 
+#INCLUDE  := 
 BIN_DIR  := ../picine_1_bin
 
 # ==============================
@@ -17,13 +17,24 @@ flatten = $(subst /,_,$(patsubst %/$(notdir $(1)),%,$(1)))
 
 TARGETS := $(foreach src, $(EXERCISES), $(BIN_DIR)/$(call flatten,$(src)))
 
-.PHONY: all clean
+.PHONY: all clean test
+
+test: all
+	@passed=0; failed=0; \
+	for t in $(TARGETS); do \
+		echo "--- Running $$t ---"; \
+		./$$t; \
+		if [ $$? -eq 0 ]; then passed=$$((passed+1)); \
+		else failed=$$((failed+1)); fi; \
+	done; \
+	echo "==========================="; \
+	echo "Passed: $$passed  Failed: $$failed"
 
 all: $(TARGETS)
 
 define TEST_RULE
 $(BIN_DIR)/$(call flatten,$(1)): $(1) | $(BIN_DIR)
-	$(CC) $(CFLAGS) -I$(INCLUDE) $$< -L$(GLORPBIN) -l$(call flatten,$(1)) -o $$@
+	$(CC) $(CFLAGS) $$< -L$(GLORPBIN) -l$(call flatten,$(1)) -o $$@
 endef
 
 $(foreach src, $(EXERCISES), $(eval $(call TEST_RULE,$(src))))
