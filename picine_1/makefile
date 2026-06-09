@@ -15,7 +15,26 @@ EXERCISES := c00/ex00/ft_putchar.c \
              c00/ex05/ft_print_comb.c \
              c00/ex06/ft_print_comb2.c \
              c00/ex07/ft_putnbr.c \
-             c00/ex08/ft_print_combn.c
+             c00/ex08/ft_print_combn.c \
+             c01/ex00/ft_ft.c \
+             c01/ex01/ft_ultimate_ft.c \
+             c01/ex02/ft_swap.c \
+             c01/ex03/ft_div_mod.c \
+             c01/ex04/ft_ultimate_div_mod.c \
+             c01/ex05/ft_putstr.c \
+             c01/ex06/ft_strlen.c \
+             c01/ex07/ft_rev_int_tab.c \
+             c01/ex08/ft_sort_int_tab.c \
+             c02/ex00/ft_strcpy.c \
+             c02/ex01/ft_strncpy.c \
+             c02/ex02/ft_str_is_alpha.c \
+             c02/ex03/ft_str_is_numeric.c \
+             c02/ex04/ft_str_is_lowercase.c \
+             c02/ex05/ft_str_is_uppercase.c \
+             c02/ex06/ft_str_is_printable.c \
+             c02/ex07/ft_strupcase.c \
+             c02/ex08/ft_strlowcase.c \
+             c02/ex09/ft_strcapitalize.c
 # ==============================
 
 # c00/ex00/ft_putchar.c -> c00_ex00
