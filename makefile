@@ -38,7 +38,19 @@ EXERCISES := c00/ex00/ft_putchar.c \
              c02/ex06/ft_str_is_printable.c \
              c02/ex07/ft_strupcase.c \
              c02/ex08/ft_strlowcase.c \
-             c02/ex09/ft_strcapitalize.c
+             c02/ex09/ft_strcapitalize.c \
+             c03/ex00/ft_strcmp.c \
+             c03/ex01/ft_strncmp.c \
+             c03/ex02/ft_strcat.c \
+             c03/ex03/ft_strncat.c \
+             c03/ex04/ft_strstr.c \
+             c03/ex05/ft_strlcat.c \
+             c04/ex00/ft_strlen.c \
+             c04/ex01/ft_putstr.c \
+             c04/ex02/ft_putnbr.c \
+             c04/ex03/ft_atoi.c \
+             c04/ex04/ft_putnbr_base.c \
+             c04/ex05/ft_atoi_base.c
 # ==============================
 
 .PHONY: all test test-1 test-2 libs glorp clean

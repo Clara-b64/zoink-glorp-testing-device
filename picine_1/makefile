@@ -34,7 +34,10 @@ EXERCISES := c00/ex00/ft_putchar.c \
              c02/ex06/ft_str_is_printable.c \
              c02/ex07/ft_strupcase.c \
              c02/ex08/ft_strlowcase.c \
-             c02/ex09/ft_strcapitalize.c
+             c02/ex09/ft_strcapitalize.c \
+             c03/ex00/ft_strcmp.c \
+             c03/ex01/ft_strncmp.c \
+             c03/ex02/ft_strcat.c
 # ==============================
 
 # c00/ex00/ft_putchar.c -> c00_ex00
