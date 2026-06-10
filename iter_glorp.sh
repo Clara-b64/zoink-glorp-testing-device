@@ -1,0 +1,2 @@
+make libs
+make test
