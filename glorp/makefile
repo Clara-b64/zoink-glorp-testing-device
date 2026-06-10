@@ -14,7 +14,7 @@ SHARED_ARTIFACTS = $(patsubst shared/%.c, $(ARTIFACT_DIR)/%.o, $(SHARED_FILES))
 TEST_FILES = $(wildcard tests/*.c)
 TEST_OBJECTS = $(patsubst tests/%.c, $(GLORPBIN)/lib%.a, $(TEST_FILES))
 
-$(info TEST_OBJECTS = $(TEST_OBJECTS))
+#$(info TEST_OBJECTS = $(TEST_OBJECTS))
 
 .PHONY: all
 all: $(TEST_OBJECTS)

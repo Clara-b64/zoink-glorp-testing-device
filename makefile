@@ -50,7 +50,16 @@ EXERCISES := c00/ex00/ft_putchar.c \
              c04/ex02/ft_putnbr.c \
              c04/ex03/ft_atoi.c \
              c04/ex04/ft_putnbr_base.c \
-             c04/ex05/ft_atoi_base.c
+             c04/ex05/ft_atoi_base.c \
+             c05/ex00/ft_iterative_factorial.c \
+             c05/ex01/ft_recursive_factorial.c \
+             c05/ex02/ft_iterative_power.c \
+             c05/ex03/ft_recursive_power.c \
+             c05/ex04/ft_fibonacci.c \
+             c05/ex05/ft_sqrt.c \
+             c05/ex06/ft_is_prime.c \
+             c05/ex07/ft_find_next_prime.c \
+             c05/ex08/ft_ten_queens_puzzle.c
 # ==============================
 
 .PHONY: all test test-1 test-2 libs glorp clean
