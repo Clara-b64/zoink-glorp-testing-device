@@ -71,7 +71,7 @@ int	ft_atoi_base(char *str, char *base)
 	base_length = ft_strlen(base);
 	if (!check_base(base))
 		return (0);
-	while ((str[i] >= 9 && str[i] <= 13 || str[i] == ' '))
+	while (((str[i] >= 9 && str[i] <= 13) || str[i] == ' '))
 		i++;
 	while (str[i] == '+' || str[i] == '-')
 		if (str[i++] == '-')

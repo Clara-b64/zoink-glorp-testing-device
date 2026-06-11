@@ -109,7 +109,7 @@ int	main(void)
 	printf("%s\n", ft_split(str1, str2)[0]);
 }
 */
-
+/*
 #include <stdio.h>
 
 char	**ft_split(char *str, char *charset);
@@ -131,3 +131,4 @@ int	main(int argc, char **argv)
 	else
 		return (1);
 }
+    */

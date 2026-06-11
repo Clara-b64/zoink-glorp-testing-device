@@ -1,10 +1,25 @@
 CC       := gcc
-CFLAGS   := -Wall -Wextra -Werror
+CFLAGS   := -Wall -Wextra -Werror -fsanitize=address -g
 GLORPBIN := glorpbin
 
 # Piscines to build & test. Each is a directory next to this makefile that holds
 # the same exercises; module dirs may be lowercase (c00) or uppercase (C00).
 PISCINES := picine_1 picine_2
+
+# Exercises (lib = <module>_<exercise>) run WITHOUT leak detection because a
+# reference solution knowingly leaks there; every other exercise gets
+# LeakSanitizer. c07_ex01 / c07_ex02: picine_2 mallocs before its min >= max
+# guard and drops the pointer, leaking on the min == max path. Remove an entry to
+# force that exercise leak-clean (it will then fail picine_2 until the leak is
+# fixed).
+LEAK_EXEMPT := c07_ex01 c07_ex02
+
+# Header exercises (lib = <module>_<exercise>) ship a header, not a function, so
+# there is no archive to link. The glorp test #includes the piscine's header and
+# is compiled together with glorp/shared and -I<piscine exercise dir> instead of
+# linking lib<lib>.a. The EXERCISES entry points at the header (its presence is
+# the existence check). List such exercises here.
+HEADER_EXERCISES := c08_ex01 c08_ex02 c08_ex03
 
 # ==============================
 # ADD YOUR EXERCISES HERE
@@ -59,7 +74,17 @@ EXERCISES := c00/ex00/ft_putchar.c \
              c05/ex05/ft_sqrt.c \
              c05/ex06/ft_is_prime.c \
              c05/ex07/ft_find_next_prime.c \
-             c05/ex08/ft_ten_queens_puzzle.c
+             c05/ex08/ft_ten_queens_puzzle.c \
+             c07/ex00/ft_strdup.c \
+             c07/ex01/ft_range.c \
+             c07/ex02/ft_ultimate_range.c \
+             c07/ex03/ft_strjoin.c \
+             c07/ex04/ft_convert_base.c \
+             c07/ex05/ft_split.c \
+             c08/ex01/ft_boolean.h \
+             c08/ex02/ft_abs.h \
+             c08/ex03/ft_point.h \
+
 # ==============================
 
 .PHONY: all test test-1 test-2 libs glorp clean
@@ -97,8 +122,13 @@ test test-1 test-2:
 			bin="$${pis}_bin/$$lib"; \
 			if [ ! -f "$$src" ]; then \
 				echo "  [SKIP]  $$lib ($$src not found)"; skip=$$((skip+1)); continue; fi; \
-			if err=$$($(CC) $(CFLAGS) "$$src" -L$(GLORPBIN) -l$$lib -o "$$bin" 2>&1); then \
-				if out=$$(./"$$bin" 2>&1); then \
+				case " $(HEADER_EXERCISES) " in \
+				*" $$lib "*) built=no; err=$$($(CC) $(CFLAGS) "glorp/tests/$$lib.c" glorp/shared/*.c -Iglorp/shared -I"$$pis/$$moddir/$$exo" -o "$$bin" 2>&1) && built=yes ;; \
+				*) built=no; err=$$($(CC) $(CFLAGS) "$$pis/$$moddir/$$exo/"*.c -L$(GLORPBIN) -l$$lib -o "$$bin" 2>&1) && built=yes ;; \
+				esac; \
+				if [ "$$built" = yes ]; then \
+				case " $(LEAK_EXEMPT) " in *" $$lib "*) leaks=0 ;; *) leaks=1 ;; esac; \
+				if out=$$(ASAN_OPTIONS=detect_leaks=$$leaks ./"$$bin" 2>&1); then \
 					echo "  [OK]    $$lib"; pass=$$((pass+1)); \
 				else \
 					echo "  [FAIL]  $$lib"; echo "$$out" | sed 's/^/          /'; fail=$$((fail+1)); fi; \
