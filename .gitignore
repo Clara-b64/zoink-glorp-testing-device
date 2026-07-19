@@ -1,0 +1,10 @@
+# Build outputs of the glorp harness (make libs / make test)
+/glorpbin/
+/artifacts/
+/artifacts_tests/
+/picine_1_bin/
+/picine_2_bin/
+
+# Stray compiler junk
+*.o
+*.obj

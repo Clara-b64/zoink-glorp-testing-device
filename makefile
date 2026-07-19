@@ -19,7 +19,24 @@ LEAK_EXEMPT := c07_ex01 c07_ex02
 # is compiled together with glorp/shared and -I<piscine exercise dir> instead of
 # linking lib<lib>.a. The EXERCISES entry points at the header (its presence is
 # the existence check). List such exercises here.
-HEADER_EXERCISES := c08_ex01 c08_ex02 c08_ex03
+HEADER_EXERCISES := c08_ex00 c08_ex01 c08_ex02 c08_ex03
+
+# Exercises laid out as <exercise>/srcs/*.c + <exercise>/includes/ (instead of
+# .c files directly in the exercise dir). Their EXERCISES entry points at
+# srcs/main.c (the existence check); the build compiles srcs/*.c -Iincludes.
+SRCS_EXERCISES := c11_ex05
+
+# Piscine sources are compiled with -Dmain=studentMain: program exercises (c06,
+# c10, c11_ex05) define main as their entry point, and several function
+# exercises ship leftover debug mains. Without the rename the linker would
+# prefer the student's main over the test runner's and the tests would silently
+# never run. Program tests call studentMain(argc, argv) directly; function
+# tests just ignore it.
+# -Wno-error=return-type: C99 lets main() fall off the end without a return,
+# but after the rename that legal pattern would become a -Werror build break;
+# keep it a warning so renamed mains build exactly like the real moulinette
+# compiles them (no test asserts studentMain's return value).
+MAIN_RENAME := -Dmain=studentMain -Wno-error=return-type
 
 # ==============================
 # ADD YOUR EXERCISES HERE
@@ -54,6 +71,9 @@ EXERCISES := c00/ex00/ft_putchar.c \
              c02/ex07/ft_strupcase.c \
              c02/ex08/ft_strlowcase.c \
              c02/ex09/ft_strcapitalize.c \
+             c02/ex10/ft_strlcpy.c \
+             c02/ex11/ft_putstr_non_printable.c \
+             c02/ex12/ft_print_memory.c \
              c03/ex00/ft_strcmp.c \
              c03/ex01/ft_strncmp.c \
              c03/ex02/ft_strcat.c \
@@ -75,15 +95,62 @@ EXERCISES := c00/ex00/ft_putchar.c \
              c05/ex06/ft_is_prime.c \
              c05/ex07/ft_find_next_prime.c \
              c05/ex08/ft_ten_queens_puzzle.c \
+             c06/ex00/ft_print_program_name.c \
+             c06/ex01/ft_print_params.c \
+             c06/ex02/ft_rev_params.c \
+             c06/ex03/ft_sort_params.c \
              c07/ex00/ft_strdup.c \
              c07/ex01/ft_range.c \
              c07/ex02/ft_ultimate_range.c \
              c07/ex03/ft_strjoin.c \
              c07/ex04/ft_convert_base.c \
              c07/ex05/ft_split.c \
+             c08/ex00/ft.h \
              c08/ex01/ft_boolean.h \
              c08/ex02/ft_abs.h \
              c08/ex03/ft_point.h \
+             c08/ex04/ft_strs_to_tab.c \
+             c08/ex05/ft_show_tab.c \
+             c09/ex00/ft_putchar.c \
+             c09/ex02/ft_split.c \
+             c10/ex00/ft_display_file.c \
+             c10/ex01/ft_cat.c \
+             c10/ex02/ft_tail.c \
+             c10/ex03/ft_hexdump.c \
+             c11/ex00/ft_foreach.c \
+             c11/ex01/ft_map.c \
+             c11/ex02/ft_any.c \
+             c11/ex03/ft_count_if.c \
+             c11/ex04/ft_is_sort.c \
+             c11/ex05/srcs/main.c \
+             c11/ex06/ft_sort_string_tab.c \
+             c11/ex07/ft_advanced_sort_string_tab.c \
+             c12/ex00/ft_create_elem.c \
+             c12/ex01/ft_list_push_front.c \
+             c12/ex02/ft_list_size.c \
+             c12/ex03/ft_list_last.c \
+             c12/ex04/ft_list_push_back.c \
+             c12/ex05/ft_list_push_strs.c \
+             c12/ex06/ft_list_clear.c \
+             c12/ex07/ft_list_at.c \
+             c12/ex08/ft_list_reverse.c \
+             c12/ex09/ft_list_foreach.c \
+             c12/ex10/ft_list_foreach_if.c \
+             c12/ex11/ft_list_find.c \
+             c12/ex12/ft_list_remove_if.c \
+             c12/ex13/ft_list_merge.c \
+             c12/ex14/ft_list_sort.c \
+             c12/ex15/ft_list_reverse_fun.c \
+             c12/ex16/ft_sorted_list_insert.c \
+             c12/ex17/ft_sorted_list_merge.c \
+             c13/ex00/btree_create_node.c \
+             c13/ex01/btree_apply_prefix.c \
+             c13/ex02/btree_apply_infix.c \
+             c13/ex03/btree_apply_suffix.c \
+             c13/ex04/btree_insert_data.c \
+             c13/ex05/btree_search_item.c \
+             c13/ex06/btree_level_count.c \
+             c13/ex07/btree_apply_by_level.c \
 
 # ==============================
 
@@ -124,7 +191,11 @@ test test-1 test-2:
 				echo "  [SKIP]  $$lib ($$src not found)"; skip=$$((skip+1)); continue; fi; \
 				case " $(HEADER_EXERCISES) " in \
 				*" $$lib "*) built=no; err=$$($(CC) $(CFLAGS) "glorp/tests/$$lib.c" glorp/shared/*.c -Iglorp/shared -I"$$pis/$$moddir/$$exo" -o "$$bin" 2>&1) && built=yes ;; \
-				*) built=no; err=$$($(CC) $(CFLAGS) "$$pis/$$moddir/$$exo/"*.c -L$(GLORPBIN) -l$$lib -o "$$bin" 2>&1) && built=yes ;; \
+				*) srcs="$$pis/$$moddir/$$exo/"*.c; inc=""; \
+				case " $(SRCS_EXERCISES) " in \
+				*" $$lib "*) srcs="$$pis/$$moddir/$$exo/srcs/"*.c; inc="-I$$pis/$$moddir/$$exo/includes" ;; \
+				esac; \
+				built=no; err=$$($(CC) $(CFLAGS) $(MAIN_RENAME) $$srcs $$inc -L$(GLORPBIN) -l$$lib -o "$$bin" 2>&1) && built=yes ;; \
 				esac; \
 				if [ "$$built" = yes ]; then \
 				case " $(LEAK_EXEMPT) " in *" $$lib "*) leaks=0 ;; *) leaks=1 ;; esac; \
